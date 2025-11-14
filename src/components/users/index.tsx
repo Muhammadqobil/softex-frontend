@@ -1,63 +1,54 @@
 import React, {useEffect, useState} from "react";
-import {Flex, message, Table} from "antd";
+import {Button, Flex, Table} from "antd";
 import type {TableColumnsType, TableProps} from "antd";
-import axios from "axios";
 import {GrFormNextLink, GrFormPreviousLink} from "react-icons/gr";
 import {PostDataType} from "../../models/api_models";
+import {useUserStore} from "../../store/useUsersStore";
+import {UserStoreType} from "../../models/store_models/store.dt";
 
 type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 
 
 
-const columns: TableColumnsType<PostDataType> = [
+const columns: TableColumnsType<UserStoreType> = [
     {title: "Id", dataIndex: "id"},
-    {title: "Title", dataIndex: "title"},
-    {title: "Body", dataIndex: "body"},
+    {title: "First name", dataIndex: "first_name"},
+    {title: "Last name", dataIndex: "last_name"},
+    {title: "Gender", dataIndex: "gender"},
+    {title: "Action", dataIndex: "action"},
 ];
 
 
-export const Posts: React.FC = () => {
+export const Users: React.FC = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [data, setData] = useState<PostDataType[]>([]);
+    const [loading, setLoading] = useState(true);
+    const {users} = useUserStore()
 
-    const getData = async () => {
-        setLoading(true);
-        try {
-            let resp = await axios.get("https://jsonplaceholder.typicode.com/posts");
-            if (resp?.data) {
-                setData(resp.data.map((item?: PostDataType) => {
-                    return {key: item?.id, id: item?.id, title: item?.title, body: item?.body};
-                }));
-            } else {
-                message.error("No data");
-            }
-        } catch (err: any) {
-            message.error("Failed to fetch data");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
 
-    const rowSelection: TableRowSelection<PostDataType> = {
+    const rowSelection: TableRowSelection<UserStoreType> = {
         selectedRowKeys,
         onChange: onSelectChange,
     };
 
     useEffect(() => {
-        getData().then(r => r)
+        setTimeout(()=>{
+            setLoading(false);
+        }, 300)
     }, []);
 
     return (
-        <Flex gap="middle" vertical className={"post-container"}>
-            <Table<PostDataType>
+        <Flex gap="middle" vertical className={"users-container"}>
+            <div className="users-container__header">
+                <Button type="primary" htmlType="submit" className="users-container__btn">Qo'shish</Button>
+            </div>
+            <Table<UserStoreType>
                 rowSelection={rowSelection}
                 columns={columns}
-                dataSource={data}
+                dataSource={users}
                 loading={loading}
                 pagination={{
                     position: ["bottomCenter"],
@@ -80,7 +71,7 @@ export const Posts: React.FC = () => {
                         return originalElement;
                     },
                 }}
-                className={"post-container__table"}
+                className={"users-container__table"}
             />
         </Flex>
     );

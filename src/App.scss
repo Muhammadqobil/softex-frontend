@@ -207,10 +207,24 @@ $color-gray-300: #D0D5DD;
     }
 
     .main-container {
-      .post-container {
+      .users-container {
         height: calc(100vh - 60px - 20px);
         overflow: hidden;
         padding: 10px;
+
+        &__header {
+          display: flex;
+          align-items: center;
+          justify-content: end;
+        }
+
+        &__btn {
+          background-color: $color-blue;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
 
         &__table {
           overflow-y: auto;
